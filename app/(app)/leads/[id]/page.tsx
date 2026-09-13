@@ -906,6 +906,8 @@ export default function LeadDetailPage() {
   const [newTag, setNewTag] = useState("")
   const [aiSummary, setAiSummary] = useState<string | null>(null)
   const [loadingAiSummary, setLoadingAiSummary] = useState(false)
+  const [reengageCopied, setReengageCopied] = useState(false)
+  const [aiSummaryCopied, setAiSummaryCopied] = useState(false)
   const [showSchedule, setShowSchedule] = useState(false)
   const [scheduleTitle, setScheduleTitle] = useState("")
   const [scheduleDate, setScheduleDate] = useState(new Date().toISOString().slice(0, 10))
@@ -1457,14 +1459,34 @@ export default function LeadDetailPage() {
                 <p className="text-sm font-medium text-amber-200">Mensaje sugerido de re-engagement</p>
                 <p className="mt-2 text-sm leading-relaxed text-zinc-300">{outreach.reengagementMessage}</p>
               </div>
-              <button
-                type="button"
-                onClick={() => outreach.reengagementMessage && navigator.clipboard.writeText(outreach.reengagementMessage)}
-                className="shrink-0 rounded-xl border border-amber-500/20 bg-black/20 p-2 text-amber-200 hover:bg-amber-500/10"
-                title="Copiar mensaje"
-              >
-                <Copy className="w-4 h-4" />
-              </button>
+              <div className="relative shrink-0">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(outreach.reengagementMessage ?? "")
+                    setReengageCopied(true)
+                    setTimeout(() => setReengageCopied(false), 2000)
+                  }}
+                  className={`shrink-0 rounded-xl border p-2 transition-all ${
+                    reengageCopied
+                      ? "border-amber-300/50 bg-amber-500/25 text-amber-100"
+                      : "border-amber-500/20 bg-black/20 text-amber-200 hover:bg-amber-500/10"
+                  }`}
+                  title="Copiar mensaje"
+                  aria-label="Copiar mensaje"
+                >
+                  {reengageCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                </button>
+                {reengageCopied && (
+                  <span
+                    role="status"
+                    aria-live="polite"
+                    className="absolute right-0 top-full mt-1.5 whitespace-nowrap rounded-lg border border-emerald-500/30 bg-emerald-500/15 px-2 py-1 text-[11px] font-medium text-emerald-300 animate-in fade-in slide-in-from-top-1"
+                  >
+                    Mensaje copiado
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -1792,12 +1814,28 @@ export default function LeadDetailPage() {
               <button
                 onClick={async () => {
                   await navigator.clipboard.writeText(aiSummary || "")
+                  setAiSummaryCopied(true)
+                  setTimeout(() => setAiSummaryCopied(false), 2000)
                 }}
-                className="absolute top-0 right-0 p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors"
+                className={`absolute top-0 right-0 p-2 rounded-lg transition-all ${
+                  aiSummaryCopied
+                    ? "text-emerald-300 bg-emerald-500/15"
+                    : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"
+                }`}
                 title="Copiar resumen"
+                aria-label="Copiar resumen"
               >
-                <Copy className="w-4 h-4" />
+                {aiSummaryCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               </button>
+              {aiSummaryCopied && (
+                <span
+                  role="status"
+                  aria-live="polite"
+                  className="absolute top-9 right-0 whitespace-nowrap rounded-lg border border-emerald-500/30 bg-emerald-500/15 px-2 py-1 text-[11px] font-medium text-emerald-300 animate-in fade-in slide-in-from-top-1"
+                >
+                  Copiado
+                </span>
+              )}
               <div className="text-zinc-300 leading-relaxed space-y-2 markdown-content">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {aiSummary}
