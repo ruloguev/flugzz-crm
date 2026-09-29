@@ -1,21 +1,16 @@
 import crypto from "crypto"
 
-// Credenciales rotadas: ya no hay valores de respaldo en el código.
-// Admin login fallará si ADMIN_EMAIL / ADMIN_PASSWORD / ADMIN_JWT_SECRET
-// no están definidas en el entorno (Vercel / .env.local).
-const rawSecret = process.env.ADMIN_JWT_SECRET
-const rawEmail = process.env.ADMIN_EMAIL
-const rawPassword = process.env.ADMIN_PASSWORD
+// Credenciales del panel admin, solo desde el entorno (Vercel / .env.local).
+// Sin valores de respaldo en el código. Si faltan, el panel admin simplemente
+// no autentica (fallo en runtime) en vez de romper el build de la app.
+const getSecret = (): string | null => process.env.ADMIN_JWT_SECRET || null
+const getEmail = (): string | null => process.env.ADMIN_EMAIL || null
+const getPassword = (): string | null => process.env.ADMIN_PASSWORD || null
 
-if (!rawSecret || !rawEmail || !rawPassword) {
-  throw new Error("Faltan ADMIN_JWT_SECRET / ADMIN_EMAIL / ADMIN_PASSWORD en el entorno.")
-}
-
-const SECRET: string = rawSecret
-const ADMIN_EMAIL: string = rawEmail
-const ADMIN_PASSWORD: string = rawPassword
-
-export function createAdminToken(): string {
+export function createAdminToken(): string | null {
+  const SECRET = getSecret()
+  const ADMIN_EMAIL = getEmail()
+  if (!SECRET || !ADMIN_EMAIL) return null
   const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url")
   const payload = Buffer.from(
     JSON.stringify({
@@ -29,6 +24,9 @@ export function createAdminToken(): string {
 }
 
 export function verifyAdminToken(token: string): boolean {
+  const SECRET = getSecret()
+  const ADMIN_EMAIL = getEmail()
+  if (!SECRET || !ADMIN_EMAIL) return false
   try {
     const parts = token.split(".")
     if (parts.length !== 3) return false
@@ -45,5 +43,5 @@ export function verifyAdminToken(token: string): boolean {
 }
 
 export function getAdminCredentials() {
-  return { email: ADMIN_EMAIL, password: ADMIN_PASSWORD }
+  return { email: getEmail(), password: getPassword() }
 }
