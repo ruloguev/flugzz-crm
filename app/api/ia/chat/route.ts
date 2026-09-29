@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
+import { demoClient, isDemoRequest } from "@/lib/demo/guard"
 export const runtime = "nodejs"
 
 function getSupabaseAdmin() {
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
     if (!geminiKey)
       return NextResponse.json({ error: "Falta GEMINI_API_KEY." }, { status: 503 })
 
-    const supabase = getSupabaseAdmin()
+    const supabase = isDemoRequest(req) ? demoClient() : getSupabaseAdmin()
     if (!supabase)
       return NextResponse.json({ error: "Faltan credenciales de Supabase." }, { status: 503 })
 
@@ -38,8 +39,8 @@ export async function POST(req: NextRequest) {
 
       if (matches && matches.length > 0) {
         contextText = matches
-          .map((c, i) => {
-            const title = (c.metadata as any)?.document_title ?? "Documento"
+          .map((c: any, i: number) => {
+            const title = c.metadata?.document_title ?? "Documento"
             return `[Fuente ${i + 1} — ${title}]\n${c.content}`
           })
           .join("\n\n---\n\n")
@@ -55,8 +56,8 @@ export async function POST(req: NextRequest) {
 
         if (fallbackChunks && fallbackChunks.length > 0) {
           contextText = fallbackChunks
-            .map((c, i) => {
-              const title = (c.metadata as any)?.document_title ?? "Documento"
+            .map((c: any, i: number) => {
+              const title = c.metadata?.document_title ?? "Documento"
               return `[Fuente ${i + 1} — ${title}]\n${c.content}`
             })
             .join("\n\n---\n\n")

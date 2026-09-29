@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
+import { demoClient, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
@@ -13,7 +14,7 @@ function getSupabaseAdmin() {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = getSupabaseAdmin()
+    const supabase = isDemoRequest(req) ? demoClient() : getSupabaseAdmin()
     if (!supabase)
       return NextResponse.json({ error: "Faltan credenciales de Supabase." }, { status: 503 })
 

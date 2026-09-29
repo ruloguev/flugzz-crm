@@ -4,6 +4,7 @@ import { cookies } from "next/headers"
 import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
 import { computeScope } from "@/lib/role-scope"
+import { demoSearch, isDemoRequest } from "@/lib/demo/guard"
 import type {
   SearchHits,
   SearchItemLead,
@@ -41,6 +42,10 @@ export async function GET(req: NextRequest) {
     const q = (req.nextUrl.searchParams.get("q") ?? "").trim()
     if (q.length < 2) {
       return NextResponse.json(emptyResults())
+    }
+
+    if (isDemoRequest(req)) {
+      return NextResponse.json(demoSearch(q))
     }
 
     const cookieStore = await cookies()

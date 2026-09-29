@@ -1,5 +1,6 @@
 ﻿import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
+import { DEMO_COOKIE } from "@/lib/demo/constants"
 
 export async function middleware(request: NextRequest) {
   // Admin routes bypass Supabase middleware entirely (use own cookie-based auth)
@@ -14,6 +15,18 @@ export async function middleware(request: NextRequest) {
 
   // Skip Supabase auth check for non-app routes
   if (isAdminRoute || isPublicRoute || isFacebookWebhook || isGoogleAuthCallback) {
+    return NextResponse.next({ request })
+  }
+
+  // Modo demo: cookie propia → se trata como sesión válida (sin tocar Supabase).
+  // En login/signup un usuario demo se manda directo al dashboard.
+  const isDemo = request.cookies.get(DEMO_COOKIE)?.value === "1"
+  if (isDemo) {
+    if (request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/signup") {
+      const url = request.nextUrl.clone()
+      url.pathname = "/dashboard"
+      return NextResponse.redirect(url)
+    }
     return NextResponse.next({ request })
   }
 

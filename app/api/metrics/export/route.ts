@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
@@ -29,6 +30,7 @@ function arrayToCSV(data: Record<string, any>[], headers: string[]): string {
 
 export async function POST(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return demoUnavailable()
     const supabase = getSupabaseAdmin()
     if (!supabase)
       return NextResponse.json({ error: "Faltan credenciales de Supabase." }, { status: 503 })

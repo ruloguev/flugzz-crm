@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
@@ -22,6 +23,7 @@ function chunkText(text: string, size = 1000, overlap = 150): string[] {
 }
 
 export async function POST(req: NextRequest) {
+  if (isDemoRequest(req)) return demoUnavailable()
   const supabase = getSupabaseAdmin()
   if (!supabase)
     return NextResponse.json({ error: "Faltan credenciales de Supabase." }, { status: 503 })

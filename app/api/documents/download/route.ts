@@ -1,9 +1,13 @@
 import { createClient } from "@supabase/supabase-js"
-import { NextResponse } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 import JSZip from "jszip"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
-export async function POST(request: Request) {
+export const runtime = "nodejs"
+
+export async function POST(request: NextRequest) {
   try {
+    if (isDemoRequest(request)) return demoUnavailable()
     const { leadId } = await request.json()
 
     if (!leadId) {

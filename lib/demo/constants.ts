@@ -1,0 +1,11 @@
+export const DEMO_COOKIE = "flugzz_demo"
+export const DEMO_STORAGE_KEY = "flugzz_demo_db_v1"
+
+export const DEMO_USER_ID = "00000000-0000-0000-0000-000000000001"
+export const DEMO_COMPANY_ID = "00000000-0000-0000-0000-000000000002"
+export const DEMO_ROLE_DIRECTOR_ID = "00000000-0000-0000-0000-000000000003"
+export const DEMO_REP_USER_ID = "00000000-0000-0000-0000-000000000004"
+export const DEMO_REP_ROLE_ID = "00000000-0000-0000-0000-000000000005"
+
+export const DEMO_EMAIL = "demo@flugzz.xyz"
+export const DEMO_NAME = "Demo Flugzz"

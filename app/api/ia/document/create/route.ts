@@ -3,12 +3,14 @@ import { createClient } from "@supabase/supabase-js"
 import { getSupabaseUrl, getSupabaseServiceRoleKey } from "@/lib/server-env"
 import { cookies } from "next/headers"
 import { createServerClient } from "@supabase/ssr"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
 // POST: create new document record
 export async function POST(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return demoUnavailable()
     const { companyId, title, description, fileType } = await req.json()
     if (!companyId || !title)
       return NextResponse.json({ error: "Faltan companyId y title" }, { status: 400 })

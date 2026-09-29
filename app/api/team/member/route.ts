@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
@@ -42,6 +43,7 @@ function asRole(rel: unknown): RoleRecord {
  */
 export async function DELETE(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return demoUnavailable("En el modo demo no se eliminan miembros reales.", 403)
     const cookieStore = await cookies()
     const userSupabase = createServerClient(
       getSupabaseUrl()!,

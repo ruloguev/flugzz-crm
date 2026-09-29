@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
 import { getCachedContent } from "@/lib/gemini-cache"
+import { demoClient, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (!geminiKey)
       return NextResponse.json({ error: "Falta GEMINI_API_KEY." }, { status: 503 })
 
-    const supabase = getSupabaseAdmin()
+    const supabase = isDemoRequest(req) ? demoClient() : getSupabaseAdmin()
     if (!supabase)
       return NextResponse.json({ error: "Faltan credenciales de Supabase." }, { status: 503 })
 
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
       .order("created_at", { ascending: false })
       .limit(10)
 
-    const activitiesSummary = (activities ?? []).slice(0, 10).map(a => ({
+    const activitiesSummary = (activities ?? []).slice(0, 10).map((a: any) => ({
       tipo: a.type,
       titulo: a.title,
       detalle: a.body?.slice(0, 100),
@@ -82,7 +83,7 @@ export async function POST(req: NextRequest) {
       usuario: (a.user as any)?.full_name ?? "Sistema",
     }))
 
-    const stageHistory = (stageChanges ?? []).map(s => ({
+    const stageHistory = (stageChanges ?? []).map((s: any) => ({
       de: (s.from_stage as any)?.name ?? "Inicio",
       a: (s.to_stage as any)?.name,
       fecha: new Date(s.created_at).toLocaleDateString("es-MX"),
@@ -112,10 +113,10 @@ LEAD:
 - Tipo de operación: ${lead.deal_type === "sale" ? "Venta" : lead.deal_type === "rent" ? "Renta" : "Otro"}
 
 ÚLTIMAS ACTIVIDADES:
-${activitiesSummary.map(a => `- [${a.fecha}] ${a.tipo.toUpperCase()}: ${a.titulo ?? "Sin título"} ${a.detalle ? `- ${a.detalle}` : ""} (${a.usuario ?? "Sistema"})`).join("\n")}
+${activitiesSummary.map((a: any) => `- [${a.fecha}] ${a.tipo.toUpperCase()}: ${a.titulo ?? "Sin título"} ${a.detalle ? `- ${a.detalle}` : ""} (${a.usuario ?? "Sistema"})`).join("\n")}
 
 HISTORIAL DE ETAPAS:
-${stageHistory.map(s => `- ${s.fecha}: ${s.de} → ${s.a} (${s.usuario})`).join("\n") || "Sin cambios de etapa"}
+${stageHistory.map((s: any) => `- ${s.fecha}: ${s.de} → ${s.a} (${s.usuario})`).join("\n") || "Sin cambios de etapa"}
 
 Genera un resumen ejecutivo útil para el agente.`
 

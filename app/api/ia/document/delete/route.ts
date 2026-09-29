@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseUrl, getSupabaseServiceRoleKey } from "@/lib/server-env"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
 export async function DELETE(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return demoUnavailable()
     const { documentId } = await req.json()
     if (!documentId)
       return NextResponse.json({ error: "Falta documentId" }, { status: 400 })

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
 import { getCachedContent } from "@/lib/gemini-cache"
+import { demoClient, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
     if (!geminiKey)
       return NextResponse.json({ error: "Falta GEMINI_API_KEY." }, { status: 503 })
 
-    const supabase = getSupabaseAdmin()
+    const supabase = isDemoRequest(req) ? demoClient() : getSupabaseAdmin()
     if (!supabase)
       return NextResponse.json({ error: "Faltan credenciales de Supabase." }, { status: 503 })
 
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
         .eq("company_id", companyId)
         .eq("reports_to", userId)
       
-      teamIds = [userId, ...(memberships?.map(m => m.user_id) ?? [])]
+      teamIds = [userId, ...(memberships?.map((m: any) => m.user_id) ?? [])]
     }
 
     const { data: leads, error: leadsError } = await supabase

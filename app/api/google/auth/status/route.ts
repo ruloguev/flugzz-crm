@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { getSupabaseUrl, getSupabaseServiceRoleKey } from "@/lib/server-env"
+import { isDemoRequest } from "@/lib/demo/guard"
 
 export async function GET(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return NextResponse.json({ connected: false })
     const supabase = createServerClient(getSupabaseUrl()!, getSupabaseServiceRoleKey()!, {
       cookies: {
         getAll() { return req.cookies.getAll() },

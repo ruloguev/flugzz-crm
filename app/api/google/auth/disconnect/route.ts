@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { getOAuth2Client, decryptToken } from "@/lib/google-calendar"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
+import { isDemoRequest } from "@/lib/demo/guard"
 
 export async function POST(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return NextResponse.json({ ok: true })
     const supabase = createServerClient(getSupabaseUrl()!, getSupabaseServiceRoleKey()!, {
       cookies: {
         getAll() { return req.cookies.getAll() },

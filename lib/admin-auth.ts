@@ -1,8 +1,19 @@
 import crypto from "crypto"
 
-const SECRET = process.env.ADMIN_JWT_SECRET ?? "flugzz-admin-secret-change-in-production"
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "admin@flugzz.xyz"
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "flgz111093$"
+// Credenciales rotadas: ya no hay valores de respaldo en el código.
+// Admin login fallará si ADMIN_EMAIL / ADMIN_PASSWORD / ADMIN_JWT_SECRET
+// no están definidas en el entorno (Vercel / .env.local).
+const rawSecret = process.env.ADMIN_JWT_SECRET
+const rawEmail = process.env.ADMIN_EMAIL
+const rawPassword = process.env.ADMIN_PASSWORD
+
+if (!rawSecret || !rawEmail || !rawPassword) {
+  throw new Error("Faltan ADMIN_JWT_SECRET / ADMIN_EMAIL / ADMIN_PASSWORD en el entorno.")
+}
+
+const SECRET: string = rawSecret
+const ADMIN_EMAIL: string = rawEmail
+const ADMIN_PASSWORD: string = rawPassword
 
 export function createAdminToken(): string {
   const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url")

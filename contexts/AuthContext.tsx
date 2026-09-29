@@ -3,6 +3,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import type { Session } from "@supabase/supabase-js"
 import { createClient } from "@/lib/supabase"
+import { isDemoMode } from "@/lib/demo/client"
+import {
+  DEMO_USER_ID,
+  DEMO_COMPANY_ID,
+  DEMO_ROLE_DIRECTOR_ID,
+  DEMO_NAME,
+} from "@/lib/demo/constants"
 
 type Profile = {
   id: string
@@ -43,6 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<Role | null>(null)
 
   const loadFromSession = useCallback(async (session: Session | null) => {
+    if (isDemoMode()) return
     if (!session?.user) {
       setProfile(null)
       setCompany(null)
@@ -96,6 +104,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadFromSession])
 
   useEffect(() => {
+    if (isDemoMode()) {
+      setProfile({
+        id: DEMO_USER_ID,
+        full_name: DEMO_NAME,
+        company_id: DEMO_COMPANY_ID,
+        role_id: DEMO_ROLE_DIRECTOR_ID,
+        privacy_notice_accepted_at: new Date().toISOString(),
+      })
+      setCompany({ id: DEMO_COMPANY_ID, name: "Flugzz Demo" })
+      setRole({
+        id: DEMO_ROLE_DIRECTOR_ID,
+        name: "Director",
+        level: 1,
+        permissions: {
+          can_manage_users: true,
+          can_manage_roles: true,
+          can_manage_integrations: true,
+          can_reassign_leads: true,
+          is_transversal: true,
+        },
+      })
+      setLoading(false)
+      return
+    }
+
     let mounted = true
 
     supabase.auth.getSession().then(({ data }) => {

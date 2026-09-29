@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
 export async function POST(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return demoUnavailable()
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

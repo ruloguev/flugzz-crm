@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
+import { demoClient, isDemoRequest } from "@/lib/demo/guard"
 export const runtime = "nodejs"
 
 function getSupabaseAdmin() {
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Servicio de soporte no disponible." }, { status: 503 })
     }
 
-    const supabase = getSupabaseAdmin()
+    const supabase = isDemoRequest(req) ? demoClient() : getSupabaseAdmin()
     if (!supabase) {
       return NextResponse.json({ error: "Error interno." }, { status: 503 })
     }
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
 
       if (matches && matches.length > 0) {
         contextText = matches
-          .map((c, i) => `[${i + 1} — ${c.category}]\n${c.content}`)
+          .map((c: any, i: number) => `[${i + 1} — ${c.category}]\n${c.content}`)
           .join("\n\n---\n\n")
       }
     } catch (searchErr) {

@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
 export async function POST(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return demoUnavailable()
     const formData = await req.formData()
     const file = formData.get("file") as File | null
 

@@ -9,6 +9,7 @@ import {
   deleteCalendarEvent,
   encryptToken,
 } from "@/lib/google-calendar"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
 const MEETING_LABELS: Record<string, string> = {
   call: "Llamada",
@@ -89,6 +90,7 @@ async function requireOwnEvent(supabase: ReturnType<typeof createServerClient>, 
 
 export async function POST(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return demoUnavailable("En el modo demo no se sincroniza con Google Calendar.", 400)
     const supabase = getSupabase(req)
     const user = await requireUser(supabase)
     if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
@@ -300,6 +302,7 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return demoUnavailable("En el modo demo no se sincroniza con Google Calendar.", 400)
     const supabase = getSupabase(req)
     const user = await requireUser(supabase)
     if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 })

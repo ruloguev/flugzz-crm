@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr"
 import { createClient } from "@supabase/supabase-js"
 import { cookies } from "next/headers"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
@@ -15,6 +16,7 @@ function adminClient() {
 
 export async function DELETE(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return demoUnavailable("En el modo demo no se elimina la cuenta.", 403)
     const cookieStore = await cookies()
     const userSupabase = createServerClient(
       getSupabaseUrl()!,

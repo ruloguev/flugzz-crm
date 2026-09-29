@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseUrl, getSupabaseServiceRoleKey } from "@/lib/server-env"
+import { demoDocumentList, isDemoRequest } from "@/lib/demo/guard"
 
 export const runtime = "nodejs"
 
@@ -9,6 +10,8 @@ export async function GET(req: NextRequest) {
     const companyId = req.nextUrl.searchParams.get("companyId")
     if (!companyId)
       return NextResponse.json({ error: "Falta companyId" }, { status: 400 })
+
+    if (isDemoRequest(req)) return NextResponse.json(demoDocumentList())
 
     const supabase = createClient(getSupabaseUrl()!, getSupabaseServiceRoleKey()!)
 

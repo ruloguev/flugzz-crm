@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { demoTeamMembers, isDemoRequest } from "@/lib/demo/guard"
 
 export async function GET(req: NextRequest) {
   try {
+    const companyId = req.nextUrl.searchParams.get("companyId")
+    if (!companyId) return NextResponse.json({ error: "Falta companyId" }, { status: 400 })
+
+    if (isDemoRequest(req)) return NextResponse.json(demoTeamMembers())
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     if (!supabaseUrl || !serviceRoleKey) {
       return NextResponse.json({ error: "Faltan variables de entorno del servidor." }, { status: 500 })
     }
-
-    const companyId = req.nextUrl.searchParams.get("companyId")
-    if (!companyId) return NextResponse.json({ error: "Falta companyId" }, { status: 400 })
 
     const adminClient = createClient(supabaseUrl, serviceRoleKey)
 

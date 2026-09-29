@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { checkSeats, seatCheckErrorMessage } from "@/lib/seats"
+import { demoUnavailable, isDemoRequest } from "@/lib/demo/guard"
 
 export async function POST(req: NextRequest) {
   try {
+    if (isDemoRequest(req)) return demoUnavailable("En el modo demo no se envían invitaciones reales.", 403)
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 

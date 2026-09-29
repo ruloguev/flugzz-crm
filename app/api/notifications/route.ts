@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
+import { isDemoRequest } from "@/lib/demo/guard"
 
 /**
  * POST /api/notifications
@@ -11,6 +12,8 @@ import { getSupabaseServiceRoleKey, getSupabaseUrl } from "@/lib/server-env"
  */
 export async function POST(req: NextRequest) {
   try {
+    // En modo demo la notificación ya vive en el store local del navegador.
+    if (isDemoRequest(req)) return NextResponse.json({ ok: true })
     const body = await req.json()
     const { company_id, user_id, lead_id, type, title, body: messageBody } = body
 
