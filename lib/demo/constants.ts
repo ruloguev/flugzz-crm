@@ -1,5 +1,5 @@
 export const DEMO_COOKIE = "flugzz_demo"
-export const DEMO_STORAGE_KEY = "flugzz_demo_db_v1"
+export const DEMO_STORAGE_KEY = "flugzz_demo_db_v2"
 
 export const DEMO_USER_ID = "00000000-0000-0000-0000-000000000001"
 export const DEMO_COMPANY_ID = "00000000-0000-0000-0000-000000000002"

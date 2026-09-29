@@ -295,9 +295,8 @@ class DemoQuery implements PromiseLike<ExeResult> {
     this.wheres.push({ col, op: "search", value: query })
     return this
   }
-  order(col: string, opts?: { ascending?: boolean; referencedTable?: string }) {
-    this.orders.push({ col, descending: !opts?.ascending, referencedTable: opts?.referencedTable })
-    return this
+order(col: string, opts?: { ascending?: boolean; referencedTable?: string }) {
+    this.orders.push({ col, descending: opts?.ascending === false, referencedTable: opts?.referencedTable })
   }
   limit(n: number) {
     this.limitN = n

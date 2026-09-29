@@ -142,13 +142,13 @@
   }
 }
 
-/* 1. Creamos la animación del pulso (respiración suave) */
+/* 1. Creamos la animación del pulso (respiración suave, muy sutil) */
 @keyframes latido-flugzz {
   0%, 100% {
-    opacity: 0.05; /* Punto más bajo: casi invisible */
+    opacity: 0.015; /* Punto más bajo: latente */
   }
   50% {
-    opacity: 0.20; /* Punto más alto: brilla el panal */
+    opacity: 0.05; /* Punto más alto: apenas un latido */
   }
 }
 

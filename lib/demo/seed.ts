@@ -139,7 +139,7 @@ export function buildSeed(now = new Date().toISOString()): DemoDB {
   ]
 
   const pipelineStages: DemoRow[] = [
-    { id: S_NUEVO, company_id: DEMO_COMPANY_ID, name: "Nuevo", color: "#22D3EE", position: 1, is_closed: false, is_won: false },
+    { id: S_NUEVO, company_id: DEMO_COMPANY_ID, name: "Nuevo Lead", color: "#22D3EE", position: 1, is_closed: false, is_won: false },
     { id: S_CONTACTADO, company_id: DEMO_COMPANY_ID, name: "Contactado", color: "#FBBF24", position: 2, is_closed: false, is_won: false },
     { id: S_PROPSUESTA, company_id: DEMO_COMPANY_ID, name: "Propuesta", color: "#E879F9", position: 3, is_closed: false, is_won: false },
     { id: S_NEGOCIACION, company_id: DEMO_COMPANY_ID, name: "Negociación", color: "#34D399", position: 4, is_closed: false, is_won: false },
