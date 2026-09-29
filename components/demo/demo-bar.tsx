@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import {
   RotateCcw,
   X,
@@ -80,7 +79,7 @@ function TourOverlay({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md rounded-2xl border border-zinc-700/60 bg-zinc-900 shadow-2xl shadow-black/50 p-6">
+      <div className="relative w-full max-w-md max-h-[85dvh] overflow-y-auto overscroll-contain rounded-2xl border border-zinc-700/60 bg-zinc-900 shadow-2xl shadow-black/50 p-6">
         <div className="flex items-center gap-2 mb-4">
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-flugzz-accent/15">
             <MousePointerClick className="h-4 w-4 text-flugzz-accent" />
@@ -104,7 +103,7 @@ function TourOverlay({ onClose }: { onClose: () => void }) {
           <button
             onClick={() => advance(-1)}
             disabled={step === 0}
-            className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-zinc-100 disabled:opacity-30 disabled:hover:text-zinc-400 transition-colors"
+            className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm text-zinc-300 hover:text-white hover:bg-zinc-800 disabled:opacity-30 disabled:hover:text-zinc-300 disabled:hover:bg-transparent transition-colors"
           >
             <ChevronLeft className="w-4 h-4" /> Anterior
           </button>
@@ -122,19 +121,22 @@ function TourOverlay({ onClose }: { onClose: () => void }) {
 
           <button
             onClick={() => advance(1)}
-            className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-flugzz-accent hover:bg-flugzz-accent/10 transition-colors"
+            className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-semibold text-zinc-950 bg-flugzz-accent hover:bg-cyan-300 transition-colors"
           >
             {isLast ? "Terminar" : "Siguiente"} <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        <Link
-          href={current.href}
-          onClick={() => router.push(current.href)}
-          className="mt-4 w-full flex items-center justify-center gap-2 rounded-xl bg-flugzz-accent px-4 py-2.5 text-sm font-semibold text-zinc-950 hover:bg-cyan-300 transition-colors"
+        <button
+          type="button"
+          onClick={() => {
+            router.push(current.href)
+            onClose()
+          }}
+          className="mt-3 w-full flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-zinc-950 bg-flugzz-accent shadow-[0_0_18px_rgba(34,211,238,0.35)] hover:bg-cyan-300 active:bg-cyan-500 transition-colors"
         >
           <Sparkles className="w-4 h-4" /> {current.cta}
-        </Link>
+        </button>
       </div>
     </div>
   )
