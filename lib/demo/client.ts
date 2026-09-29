@@ -506,11 +506,14 @@ export type DemoClient = {
   rpc: (fn: string, _args?: Record<string, unknown>) => Promise<{ data: unknown; error: null }>
   auth: ReturnType<typeof makeAuth>
   storage: ReturnType<typeof makeStorage>
-  channel: (name: string) => {
-    on: (event: string, opts: unknown, cb: (payload: unknown) => void) => unknown
-    subscribe: () => { unsubscribe: () => void }
-    unsubscribe: () => void
-  }
+  channel: (name: string) => DemoChannel
+  removeChannel: (_channel: DemoChannel) => void
+}
+
+export type DemoChannel = {
+  on: (event: string, opts: unknown, cb: (payload: unknown) => void) => DemoChannel
+  subscribe: () => DemoChannel
+  unsubscribe: () => void
 }
 
 export function createDemoClient(): DemoClient {
@@ -522,12 +525,14 @@ export function createDemoClient(): DemoClient {
     },
     auth: makeAuth(),
     storage: makeStorage(),
-    channel: () => ({
-      on: () => {
-        /* realtime local sin eventos push */
-      },
-      subscribe: () => ({ unsubscribe: () => {} }),
-      unsubscribe: () => {},
-    }),
+    channel: () => {
+      const channel: DemoChannel = {
+        on: (_event, _opts, _cb) => channel,
+        subscribe: () => channel,
+        unsubscribe: () => {},
+      }
+      return channel
+    },
+    removeChannel: (_channel) => {},
   }
 }
