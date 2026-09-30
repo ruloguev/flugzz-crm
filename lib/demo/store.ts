@@ -6,8 +6,27 @@ import { buildSeed, type DemoDB, type DemoRow } from "./seed"
 
 let cache: DemoDB | null = null
 
+// Tablas que el showcase de la demo necesita siempre presentes. Si alguna falta
+// o quedó vacía, el localStorage guardado está corrupto o desactualizado y se
+// regenera la semilla (auto-reparación) en vez de dejar páginas en blanco.
+const REQUIRED_TABLES = [
+  "companies",
+  "company_subscriptions",
+  "profiles",
+  "pipeline_stages",
+  "leads",
+  "contacts",
+  "activities",
+]
+
 function canUseStorage(): boolean {
   return typeof window !== "undefined" && !!window.localStorage
+}
+
+function isDemoDBUsable(db: unknown): db is DemoDB {
+  if (!db || typeof db !== "object") return false
+  const d = db as Record<string, unknown>
+  return REQUIRED_TABLES.every((t) => Array.isArray(d[t]) && (d[t] as unknown[]).length > 0)
 }
 
 export function getDB(): DemoDB {
@@ -17,16 +36,20 @@ export function getDB(): DemoDB {
       const raw = window.localStorage.getItem(DEMO_STORAGE_KEY)
       if (raw) {
         const parsed = JSON.parse(raw) as DemoDB
-        if (parsed && typeof parsed === "object") {
+        if (isDemoDBUsable(parsed)) {
           cache = parsed
           return cache
         }
+        // guardado corrupto/incompleto → regeneramos abajo
       }
     } catch {
       // almacen corrupto → regenerar
     }
   }
+  // Semilla nueva: la persistimos de inmediato para que las cargas siguientes
+  // sean consistentes y no se reconstruya en cada navegación.
   cache = buildSeed()
+  persist()
   return cache
 }
 
