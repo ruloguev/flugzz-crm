@@ -176,31 +176,40 @@ export function DemoBar() {
 
   return (
     <>
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[70]">
-        <div className="flex items-center gap-1 rounded-full border border-zinc-700/60 bg-zinc-900/95 backdrop-blur-xl shadow-xl shadow-black/40 pl-3 pr-2 py-1.5">
+      {/* Móvil: barra compacta anclada abajo a la IZQUIERDA, para no tapar el
+          botón flotante del asistente (fixed bottom-right). En sm+ vuelve a
+          centrarse con etiquetas de texto. z-30 la deja por DEBAJO de modales,
+          hojas inferiores y el menú lateral (z-50), así nunca bloquea sus
+          botones; el contenido normal no usa z-30, así que sigue visible. */}
+      <div className="fixed bottom-3 left-3 z-30 sm:bottom-4 sm:left-1/2 sm:-translate-x-1/2">
+        <div className="flex items-center gap-0.5 rounded-full border border-zinc-700/60 bg-zinc-900/95 backdrop-blur-xl shadow-xl shadow-black/40 pl-2 pr-1 py-1 sm:gap-1 sm:pl-3 sm:pr-2 sm:py-1.5">
           <FlaskConical className="w-4 h-4 text-flugzz-accent shrink-0" />
-          <span className="text-xs font-medium text-zinc-200 whitespace-nowrap mr-1">
+          <span className="hidden sm:inline text-xs font-medium text-zinc-200 whitespace-nowrap mr-1">
             Modo demo
           </span>
           <button
             onClick={() => setTour((t) => !t)}
-            className="flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-flugzz-accent hover:bg-zinc-800 transition-colors whitespace-nowrap"
+            aria-label="Recorrido guiado"
+            title="Recorrido guiado"
+            className="flex h-9 w-9 sm:h-auto sm:w-auto items-center justify-center gap-1 rounded-full px-0 sm:px-3 text-xs font-medium text-flugzz-accent hover:bg-zinc-800 transition-colors whitespace-nowrap"
           >
-            <Sparkles className="w-3.5 h-3.5" /> Recorrido guiado
+            <Sparkles className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Recorrido guiado</span>
           </button>
           <button
             onClick={handleReset}
-            className="flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 transition-colors whitespace-nowrap"
+            aria-label="Reiniciar datos de la demo"
             title="Restablecer los datos de la demo"
+            className="flex h-9 w-9 sm:h-auto sm:w-auto items-center justify-center gap-1 rounded-full px-0 sm:px-3 text-xs font-medium text-zinc-300 hover:bg-zinc-800 transition-colors whitespace-nowrap"
           >
-            <RotateCcw className="w-3.5 h-3.5" /> Reiniciar
+            <RotateCcw className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Reiniciar</span>
           </button>
           <button
             onClick={handleExit}
-            className="flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/10 transition-colors whitespace-nowrap"
+            aria-label="Salir del modo demo"
             title="Salir del modo demo"
+            className="flex h-9 w-9 sm:h-auto sm:w-auto items-center justify-center gap-1 rounded-full px-0 sm:px-3 text-xs font-medium text-red-300 hover:bg-red-500/10 transition-colors whitespace-nowrap"
           >
-            <X className="w-3.5 h-3.5" /> Salir
+            <X className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Salir</span>
           </button>
         </div>
       </div>
