@@ -33,6 +33,10 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
+  /* Cian de marca. Tailwind v4 ignora tailwind.config.ts, así que el color
+     debe declararse aquí para que existan bg-/text-/border-flugzz-accent. */
+  --color-flugzz-accent: #22D3EE;
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
